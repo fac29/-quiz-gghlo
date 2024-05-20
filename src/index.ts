@@ -10,3 +10,7 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(port, () => {
 	console.log('connected to the server is successfull');
 });
+
+app.delete('/questions/delete', (req: Request, res: Response) => {
+	res.send(`delete ${req.body.id}`);
+});
