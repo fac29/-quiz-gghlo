@@ -1,22 +1,11 @@
 import express, { Express, Application, Request, Response } from 'express';
-import fs from 'fs/promises';
 
+const fs = require('fs');
+const fsPromises = fs.promises;
 const library = 'data.json';
 
 const app: Express = express();
 const port = 3210;
-
-// Define the types
-// interface Question {
-//     id: number;
-//     category: string;
-//     difficulty: string;
-//     question: string;
-//     options: string[];
-//     answer: string;
-//     favourited: boolean;
-//     timestamp: string;
-// }
 
 interface LibraryData {
 	questions: Question[];
@@ -119,6 +108,25 @@ app.listen(port, () => {
 //section for create new question endpoint
 
 //delete question endpoint section
-app.delete('/questions/delete', (req: Request, res: Response) => {
-	res.send(`server got a delete request`);
+app.delete('/questions/:id', async (req: Request, res: Response) => {
+	console.log(parseInt(req.params.id));
+	try {
+		let id = req.params.id;
+		let deleteData = await fsPromises.readFile(library, 'utf8');
+		let jsonDeleteData = JSON.parse(deleteData);
+		let qMatch = jsonDeleteData.questions.findIndex(
+			(item: any) => item.id === id
+		);
+		if (qMatch) {
+			jsonDeleteData.questions.splice(qMatch, 1);
+			let updatedJsonString = JSON.stringify(jsonDeleteData);
+			await fsPromises.writeFile(library, updatedJsonString);
+			console.log('the question has been  deleted');
+			res.send('question has successfully been deleted');
+		} else {
+			console.log(`Question with id ${id} not found`);
+		}
+	} catch (err) {
+		console.log(err);
+	}
 });
