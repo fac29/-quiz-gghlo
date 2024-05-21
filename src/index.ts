@@ -28,13 +28,7 @@ type Question = {
 	answer: string;
 	favourited: boolean;
 	timestamp: string;
-};
-
-// query params template
-type UserInput = {
-	difficulty: 'easy' | 'medium' | 'hard';
-	category: string;
-	numberQus: number;
+	numberQus?: number; //number of questions determined by user query but not in library
 };
 
 //get endpoint setion
