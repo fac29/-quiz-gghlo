@@ -1,21 +1,37 @@
 import express, { Express, Application, Request, Response } from 'express';
+import fs from 'fs/promises';
 
-const fs = require('fs');
 const library = 'data.json';
 
 const app: Express = express();
 const port = 3210;
 
-//util section
-const readData = async () => {
-	fs.readFile(library, (err: any, data: any) => {
-		if (err) {
-			console.error(err);
-			return;
-		}
+// Define the types
+// interface Question {
+//     id: number;
+//     category: string;
+//     difficulty: string;
+//     question: string;
+//     options: string[];
+//     answer: string;
+//     favourited: boolean;
+//     timestamp: string;
+// }
 
-		console.log(data.toString());
-	});
+interface LibraryData {
+    questions: Question[];
+}
+
+//util section
+const readData = async (): Promise<LibraryData> => {
+    try {
+        const data = await fs.readFile(library, 'utf8');
+		console.log(data)
+        return JSON.parse(data) as LibraryData;
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
 };
 
 // request body template
@@ -36,6 +52,36 @@ app.get('/', (req: Request, res: Response) => {
 	readData();
 	res.send('Express + TypeScript Server');
 });
+
+//get questions by category and difficulty
+app.get('/questions', async(req: Request, res: Response) => {
+	try {
+		const data = await readData();
+		const questions = data.questions;
+		const category = req.query.category
+		const difficulty = req.query.difficulty
+
+		let filteredQuestions = questions;
+
+		if (category) {
+			filteredQuestions = filteredQuestions.filter((question: any) => question.category === category);
+		}
+
+		if (difficulty) {
+			filteredQuestions = filteredQuestions.filter((question: any) => question.difficulty === difficulty);
+		}
+
+		if (filteredQuestions.length > 0) {
+			res.json(filteredQuestions);
+		} else {
+			res.send("No matching questions found in the library.")
+		}
+	} catch (err) {
+		res.status(500).send('Failed to read data');
+	}
+	
+	
+  });
 
 app.listen(port, () => {
 	console.log('connected to the server is successfull');
