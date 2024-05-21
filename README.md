@@ -9,3 +9,12 @@
 | /questions | POST | JSON string | Category, difficulty, questions, options and answer. Timestamp and id are generated automatically |
 | /questions/:id | PUT | JSON string | Update existing question with favouriting? |
 | /questions/:id | DELETE | JSON string | Delete existing question |
+
+
+
+As a **quizzer**, I want to:
+
+- Select a subject area for my quiz.
+- Begin a quiz session with randomly generated questions.
+- View a summary of my quiz results, including areas of strength and weakness.
+- Add, edit, and delete quiz questions and answers.
