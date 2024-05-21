@@ -19,19 +19,44 @@ const port = 3210;
 // }
 
 interface LibraryData {
-    questions: Question[];
+	questions: Question[];
 }
 
 //util section
 const readData = async (): Promise<LibraryData> => {
-    try {
-        const data = await fs.readFile(library, 'utf8');
-		console.log(data)
-        return JSON.parse(data) as LibraryData;
-    } catch (err) {
-        console.error(err);
-        throw err;
-    }
+	try {
+		const data = await fs.readFile(library, 'utf8');
+		console.log(data);
+		return JSON.parse(data) as LibraryData;
+	} catch (err) {
+		console.error(err);
+		throw err;
+	}
+};
+
+const writeData = async (content: any) => {
+	try {
+		let jsonString = JSON.stringify(content);
+		let data = await fs.readFile(library, 'utf8');
+		let jsonBD = JSON.parse(data);
+		let match = jsonBD.find((item: any) => item.id === content.id);
+		if (match) {
+			let updatedJsonString = JSON.stringify(jsonBD);
+			await fs.writeFile(library, updatedJsonString);
+			console.log('The file has been updated!');
+		} else {
+			// add the new question to the database document
+			jsonBD.push(content);
+			//missing the ID creation
+			let updatedJsonString = JSON.stringify(jsonBD);
+			await fs.writeFile(library, updatedJsonString);
+			console.log('The file has been saved!');
+		}
+	} catch (err) {
+		console.error(err);
+	}
+
+	console.log();
 };
 
 // request body template
@@ -54,34 +79,36 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 //get questions by category and difficulty
-app.get('/questions', async(req: Request, res: Response) => {
+app.get('/questions', async (req: Request, res: Response) => {
 	try {
 		const data = await readData();
 		const questions = data.questions;
-		const category = req.query.category
-		const difficulty = req.query.difficulty
+		const category = req.query.category;
+		const difficulty = req.query.difficulty;
 
 		let filteredQuestions = questions;
 
 		if (category) {
-			filteredQuestions = filteredQuestions.filter((question: any) => question.category === category);
+			filteredQuestions = filteredQuestions.filter(
+				(question: any) => question.category === category
+			);
 		}
 
 		if (difficulty) {
-			filteredQuestions = filteredQuestions.filter((question: any) => question.difficulty === difficulty);
+			filteredQuestions = filteredQuestions.filter(
+				(question: any) => question.difficulty === difficulty
+			);
 		}
 
 		if (filteredQuestions.length > 0) {
 			res.json(filteredQuestions);
 		} else {
-			res.send("No matching questions found in the library.")
+			res.send('No matching questions found in the library.');
 		}
 	} catch (err) {
 		res.status(500).send('Failed to read data');
 	}
-	
-	
-  });
+});
 
 app.listen(port, () => {
 	console.log('connected to the server is successfull');
