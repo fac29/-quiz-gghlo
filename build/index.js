@@ -13,29 +13,49 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const fs = require('fs');
+const promises_1 = __importDefault(require("fs/promises"));
+const library = 'data.json';
 const app = (0, express_1.default)();
 const port = 3210;
-const library = 'data.json';
-//util section
+// Utility function to read data
 const readData = () => __awaiter(void 0, void 0, void 0, function* () {
-    fs.readFile(library, (err, data) => {
-        if (err) {
-            console.error(err);
-            return;
-        }
-        console.log(data.toString());
-    });
+    try {
+        const data = yield promises_1.default.readFile(library, 'utf8');
+        return JSON.parse(data);
+    }
+    catch (err) {
+        console.error(err);
+        throw err;
+    }
 });
 //get endpoint setion
 app.get('/', (req, res) => {
     readData();
     res.send('Express + TypeScript Server');
 });
+//get questions by category and difficulty
+app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = yield readData();
+    const questions = data.questions;
+    const category = req.query.category;
+    const difficulty = req.query.difficulty;
+    let filteredQuestions = questions;
+    if (category) {
+        filteredQuestions = filteredQuestions.filter((question) => question.category === category);
+    }
+    if (difficulty) {
+        filteredQuestions = filteredQuestions.filter((question) => question.difficulty === difficulty);
+    }
+    res.json(filteredQuestions);
+    // readData();
+    // res.send('Questions');
+}));
 app.listen(port, () => {
     console.log('connected to the server is successfull');
 });
-//delete endpoint section
+//section for update endpoints
+//section for create new question endpoint
+//delete question endpoint section
 app.delete('/questions/delete', (req, res) => {
     res.send(`server got a delete request`);
 });
