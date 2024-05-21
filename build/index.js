@@ -17,10 +17,11 @@ const promises_1 = __importDefault(require("fs/promises"));
 const library = 'data.json';
 const app = (0, express_1.default)();
 const port = 3210;
-// Utility function to read data
+//util section
 const readData = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = yield promises_1.default.readFile(library, 'utf8');
+        console.log(data);
         return JSON.parse(data);
     }
     catch (err) {
@@ -46,9 +47,12 @@ app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     if (difficulty) {
         filteredQuestions = filteredQuestions.filter((question) => question.difficulty === difficulty);
     }
-    res.json(filteredQuestions);
-    // readData();
-    // res.send('Questions');
+    if (filteredQuestions.length > 0) {
+        res.json(filteredQuestions);
+    }
+    else {
+        res.send("No matching questions found in the library.");
+    }
 }));
 app.listen(port, () => {
     console.log('connected to the server is successfull');

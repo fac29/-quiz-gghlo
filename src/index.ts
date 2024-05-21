@@ -58,7 +58,12 @@ app.get('/questions', async(req: Request, res: Response) => {
 		filteredQuestions = filteredQuestions.filter((question: any) => question.difficulty === difficulty);
 	}
 
-	res.json(filteredQuestions);
+	if (filteredQuestions.length > 0) {
+		res.json(filteredQuestions);
+	} else {
+		res.send("No matching questions found in the library.")
+	}
+	
   });
 
 app.listen(port, () => {
