@@ -24,6 +24,11 @@ app.get('/', (req: Request, res: Response) => {
 	res.send('Express + TypeScript Server');
 });
 
+app.get('/questions', (req, res) => {
+	readData();
+	res.send('Questions');
+  });
+
 app.listen(port, () => {
 	console.log('connected to the server is successfull');
 });
