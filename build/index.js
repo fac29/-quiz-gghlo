@@ -13,14 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const promises_1 = __importDefault(require("fs/promises"));
+const fs = require('fs');
+const fsPromises = fs.promises;
 const library = 'data.json';
 const app = (0, express_1.default)();
 const port = 3210;
 //util section
 const readData = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const data = yield promises_1.default.readFile(library, 'utf8');
+        const data = yield fs.readFile(library, 'utf8');
         console.log(data);
         return JSON.parse(data);
     }
@@ -28,6 +29,31 @@ const readData = () => __awaiter(void 0, void 0, void 0, function* () {
         console.error(err);
         throw err;
     }
+});
+const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let jsonString = JSON.stringify(content);
+        let data = yield fs.readFile(library, 'utf8');
+        let jsonDB = JSON.parse(data);
+        let match = jsonDB.find((item) => item.id === content.id);
+        if (match) {
+            let updatedJsonString = JSON.stringify(jsonDB);
+            yield fs.writeFile(library, updatedJsonString);
+            console.log('The file has been updated!');
+        }
+        else {
+            // add the new question to the database document
+            jsonDB.push(content);
+            //missing the ID creation
+            let updatedJsonString = JSON.stringify(jsonDB);
+            yield fs.writeFile(library, updatedJsonString);
+            console.log('The file has been saved!');
+        }
+    }
+    catch (err) {
+        console.error(err);
+    }
+    console.log();
 });
 //get endpoint setion
 app.get('/', (req, res) => {
@@ -52,7 +78,7 @@ app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* 
             res.json(filteredQuestions);
         }
         else {
-            res.send("No matching questions found in the library.");
+            res.send('No matching questions found in the library.');
         }
     }
     catch (err) {
@@ -65,6 +91,25 @@ app.listen(port, () => {
 //section for update endpoints
 //section for create new question endpoint
 //delete question endpoint section
-app.delete('/questions/delete', (req, res) => {
-    res.send(`server got a delete request`);
-});
+app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(parseInt(req.params.id));
+    try {
+        let id = req.params.id;
+        let deleteData = yield fsPromises.readFile(library, 'utf8');
+        let jsondeletedata = JSON.parse(deleteData);
+        let qmatch = jsondeletedata.questions.findIndex((item) => item.id === id);
+        if (qmatch) {
+            jsondeletedata.questions.splice(qmatch, 1);
+            let updatedJsonString = JSON.stringify(jsondeletedata);
+            yield fsPromises.writeFile(library, updatedJsonString);
+            console.log('the question has been  deleted');
+            res.end();
+        }
+        else {
+            console.log(`Question with id ${id} not found`);
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}));
