@@ -18,6 +18,25 @@ const readData = async () => {
 	});
 };
 
+// request body template
+type Question = {
+	id: number;
+	category: string;
+	difficulty: 'easy' | 'medium' | 'hard';
+	question: string;
+	options: string[];
+	answer: string;
+	favourited: boolean;
+	timestamp: string;
+};
+
+// query params template
+type UserInput = {
+	difficulty: 'easy' | 'medium' | 'hard';
+	category: string;
+	numberQus: number;
+};
+
 //get endpoint setion
 app.get('/', (req: Request, res: Response) => {
 	readData();
