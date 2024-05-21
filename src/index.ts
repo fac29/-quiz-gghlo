@@ -34,6 +34,19 @@ const readData = async (): Promise<LibraryData> => {
     }
 };
 
+// request body template
+type Question = {
+	id: number;
+	category: string;
+	difficulty: 'easy' | 'medium' | 'hard';
+	question: string;
+	options: string[];
+	answer: string;
+	favourited: boolean;
+	timestamp: string;
+	numberQus?: number; //number of questions determined by user query but not in library
+};
+
 //get endpoint setion
 app.get('/', (req: Request, res: Response) => {
 	readData();
