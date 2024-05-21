@@ -113,16 +113,16 @@ app.delete('/questions/:id', async (req: Request, res: Response) => {
 	try {
 		let id = req.params.id;
 		let deleteData = await fsPromises.readFile(library, 'utf8');
-		let jsondeletedata = JSON.parse(deleteData);
-		let qmatch = jsondeletedata.questions.findIndex(
+		let jsondeleteData = JSON.parse(deleteData);
+		let qMatch = jsondeleteData.questions.findIndex(
 			(item: any) => item.id === id
 		);
-		if (qmatch) {
-			jsondeletedata.questions.splice(qmatch, 1);
-			let updatedJsonString = JSON.stringify(jsondeletedata);
+		if (qMatch) {
+			jsondeleteData.questions.splice(qMatch, 1);
+			let updatedJsonString = JSON.stringify(jsondeleteData);
 			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('the question has been  deleted');
-			res.end();
+			res.send('question has successfully been deleted');
 		} else {
 			console.log(`Question with id ${id} not found`);
 		}
