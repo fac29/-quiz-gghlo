@@ -38,17 +38,17 @@ const writeData = async (content: any) => {
 	try {
 		let jsonString = JSON.stringify(content);
 		let data = await fs.readFile(library, 'utf8');
-		let jsonBD = JSON.parse(data);
-		let match = jsonBD.find((item: any) => item.id === content.id);
+		let jsonDB = JSON.parse(data);
+		let match = jsonDB.find((item: any) => item.id === content.id);
 		if (match) {
-			let updatedJsonString = JSON.stringify(jsonBD);
+			let updatedJsonString = JSON.stringify(jsonDB);
 			await fs.writeFile(library, updatedJsonString);
 			console.log('The file has been updated!');
 		} else {
 			// add the new question to the database document
-			jsonBD.push(content);
+			jsonDB.push(content);
 			//missing the ID creation
-			let updatedJsonString = JSON.stringify(jsonBD);
+			let updatedJsonString = JSON.stringify(jsonDB);
 			await fs.writeFile(library, updatedJsonString);
 			console.log('The file has been saved!');
 		}
