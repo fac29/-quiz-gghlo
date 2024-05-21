@@ -14,9 +14,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const fs = require('fs');
+const library = 'data.json';
 const app = (0, express_1.default)();
 const port = 3210;
-const library = 'data.json';
 //util section
 const readData = () => __awaiter(void 0, void 0, void 0, function* () {
     fs.readFile(library, (err, data) => {
@@ -35,7 +35,9 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log('connected to the server is successfull');
 });
-//delete endpoint section
+//section for update endpoints
+//section for create new question endpoint
+//delete question endpoint section
 app.delete('/questions/delete', (req, res) => {
     res.send(`server got a delete request`);
 });
