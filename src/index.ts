@@ -42,27 +42,31 @@ app.get('/', (req: Request, res: Response) => {
 
 //get questions by category and difficulty
 app.get('/questions', async(req: Request, res: Response) => {
-	const data = await readData();
-	const questions = data.questions;
+	try {
+		const data = await readData();
+		const questions = data.questions;
+		const category = req.query.category
+		const difficulty = req.query.difficulty
 
-	const category = req.query.category
-	const difficulty = req.query.difficulty
+		let filteredQuestions = questions;
 
-	let filteredQuestions = questions;
+		if (category) {
+			filteredQuestions = filteredQuestions.filter((question: any) => question.category === category);
+		}
 
-	if (category) {
-		filteredQuestions = filteredQuestions.filter((question: any) => question.category === category);
+		if (difficulty) {
+			filteredQuestions = filteredQuestions.filter((question: any) => question.difficulty === difficulty);
+		}
+
+		if (filteredQuestions.length > 0) {
+			res.json(filteredQuestions);
+		} else {
+			res.send("No matching questions found in the library.")
+		}
+	} catch (err) {
+		res.status(500).send('Failed to read data');
 	}
-
-	if (difficulty) {
-		filteredQuestions = filteredQuestions.filter((question: any) => question.difficulty === difficulty);
-	}
-
-	if (filteredQuestions.length > 0) {
-		res.json(filteredQuestions);
-	} else {
-		res.send("No matching questions found in the library.")
-	}
+	
 	
   });
 
