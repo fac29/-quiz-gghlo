@@ -58,7 +58,7 @@ const writeData = async (content: Question) => {
 		console.error(err);
 	}
 
-	console.log();
+	// console.log();
 };
 
 //get endpoint setion
