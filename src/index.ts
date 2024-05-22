@@ -11,6 +11,19 @@ interface LibraryData {
 	questions: Question[];
 }
 
+// request body template
+type Question = {
+	id: number;
+	category: string;
+	difficulty: 'easy' | 'medium' | 'hard';
+	question: string;
+	options: string[];
+	answer: string;
+	favourited: boolean;
+	timestamp: string;
+	numberQus?: number; //number of questions determined by user query but not in library
+};
+
 //util section
 const readData = async (): Promise<LibraryData> => {
 	try {
@@ -23,7 +36,7 @@ const readData = async (): Promise<LibraryData> => {
 	}
 };
 
-const writeData = async (content: any) => {
+const writeData = async (content: Question) => {
 	try {
 		let jsonString = JSON.stringify(content);
 		let data = await fs.readFile(library, 'utf8');
@@ -39,26 +52,13 @@ const writeData = async (content: any) => {
 			//missing the ID creation
 			let updatedJsonString = JSON.stringify(jsonDB);
 			await fs.writeFile(library, updatedJsonString);
-			console.log('The file has been saved!'); //think this should be 'The question has been saved!'
+			console.log('The file has been saved!');
 		}
 	} catch (err) {
 		console.error(err);
 	}
 
 	console.log();
-};
-
-// request body template
-type Question = {
-	id: number;
-	category: string;
-	difficulty: 'easy' | 'medium' | 'hard';
-	question: string;
-	options: string[];
-	answer: string;
-	favourited: boolean;
-	timestamp: string;
-	numberQus?: number; //number of questions determined by user query but not in library
 };
 
 //get endpoint setion
