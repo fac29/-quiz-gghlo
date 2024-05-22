@@ -7,14 +7,29 @@ const library = 'data.json';
 const app: Express = express();
 const port = 3210;
 
+app.use(express.json());
+
 interface LibraryData {
 	questions: Question[];
 }
 
+// request body template
+type Question = {
+	id?: number;
+	category: string;
+	difficulty: 'easy' | 'medium' | 'hard';
+	question: string;
+	options: [string, string, string, string];
+	answer: string;
+	favourited?: boolean;
+	timestamp?: string;
+	numberQus?: number; //number of questions determined by user query but not in library
+};
+
 //util section
 const readData = async (): Promise<LibraryData> => {
 	try {
-		const data = await fs.readFile(library, 'utf8');
+		const data = await fsPromises.readFile(library, 'utf8');
 		console.log(data);
 		return JSON.parse(data) as LibraryData;
 	} catch (err) {
@@ -23,42 +38,34 @@ const readData = async (): Promise<LibraryData> => {
 	}
 };
 
-const writeData = async (content: any) => {
+const writeData = async (content: Question) => {
 	try {
-		let jsonString = JSON.stringify(content);
-		let data = await fs.readFile(library, 'utf8');
+		// let jsonString = JSON.stringify(content); //do we need this as we don't use it?
+		let data = await fsPromises.readFile(library, 'utf8');
 		let jsonDB = JSON.parse(data);
-		let match = jsonDB.find((item: any) => item.id === content.id);
-		if (match) {
+		// let match = jsonDB.questions.find((item: any) => item.id === content.id);
+		if (content.id) {
 			let updatedJsonString = JSON.stringify(jsonDB);
-			await fs.writeFile(library, updatedJsonString);
+			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('The file has been updated!');
 		} else {
 			// add the new question to the database document
-			jsonDB.push(content);
-			//missing the ID creation
+			// id creation
+			let dbLength = jsonDB.questions.length;
+			content.id = dbLength + 1;
+			// timestamp creation
+			content.timestamp = new Date().toISOString();
+			content.favourited = false;
+			jsonDB.questions.push(content);
 			let updatedJsonString = JSON.stringify(jsonDB);
-			await fs.writeFile(library, updatedJsonString);
+			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('The file has been saved!');
 		}
 	} catch (err) {
 		console.error(err);
 	}
 
-	console.log();
-};
-
-// request body template
-type Question = {
-	id: number;
-	category: string;
-	difficulty: 'easy' | 'medium' | 'hard';
-	question: string;
-	options: string[];
-	answer: string;
-	favourited: boolean;
-	timestamp: string;
-	numberQus?: number; //number of questions determined by user query but not in library
+	// console.log();
 };
 
 //get endpoint setion
@@ -106,6 +113,16 @@ app.listen(port, () => {
 //section for update endpoints
 
 //section for create new question endpoint
+app.post('/questions', async (req: Request, res: Response) => {
+	try {
+		const newQuestion: Question = req.body;
+		console.log({ newQuestion });
+		await writeData(newQuestion);
+		res.send('Question successfully added');
+	} catch (err) {
+		console.log(err);
+	}
+});
 
 //delete question endpoint section
 app.delete('/questions/:id', async (req: Request, res: Response) => {
