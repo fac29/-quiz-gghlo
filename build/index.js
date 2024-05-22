@@ -51,10 +51,10 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
             // timestamp creation
             content.timestamp = new Date().toISOString();
             content.favourited = false;
-            jsonDB.push(content);
-            //missing the ID creation
+            jsonDB.questions.push(content);
+            console.log(jsonDB);
             let updatedJsonString = JSON.stringify(jsonDB);
-            yield fs.writeFile(library, updatedJsonString);
+            yield fsPromises.writeFile(library, updatedJsonString);
             console.log('The file has been saved!');
         }
     }
@@ -99,8 +99,6 @@ app.listen(port, () => {
 //section for update endpoints
 //section for create new question endpoint
 app.post('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(req);
-    console.log(req.body);
     try {
         const newQuestion = req.body;
         console.log({ newQuestion });
