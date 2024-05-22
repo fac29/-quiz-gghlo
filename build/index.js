@@ -46,13 +46,11 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
             // add the new question to the database document
             // id creation
             let dbLength = jsonDB.questions.length;
-            console.log(dbLength);
             content.id = dbLength + 1;
             // timestamp creation
             content.timestamp = new Date().toISOString();
             content.favourited = false;
             jsonDB.questions.push(content);
-            console.log(jsonDB);
             let updatedJsonString = JSON.stringify(jsonDB);
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('The file has been saved!');
