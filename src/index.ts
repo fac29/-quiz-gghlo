@@ -79,7 +79,7 @@ const writeData = async (content: Question) => {
 
 //return user determined number of questions
 
-function returnNumberOfRandomQuestions(questions: any[], n: number): any[] {
+function returnNumberOfRandomQuestions<T>(questions: T[], n: number): any[] {
 	// Check if n questions are available
 	if (n <= 0 || n > questions.length) {
 		throw new Error(
@@ -101,7 +101,7 @@ app.get('/', (req: Request, res: Response) => {
 	res.send('Express + TypeScript Server');
 });
 
-//get questions by category and difficulty
+//get questions by user selected parameters
 app.get('/questions', async (req: Request, res: Response) => {
 	try {
 		const data = await readData();
@@ -114,6 +114,7 @@ app.get('/questions', async (req: Request, res: Response) => {
 		);
 		let filteredQuestions = questions;
 
+		// filtering questions
 		if (category) {
 			filteredQuestions = filteredQuestions.filter(
 				(question: any) => question.category === category
@@ -126,15 +127,28 @@ app.get('/questions', async (req: Request, res: Response) => {
 			);
 		}
 
-		if (filteredQuestions.length > 0) {
-			const selectedQuestions = returnNumberOfRandomQuestions(
-				filteredQuestions,
-				numberOfQuestions
-			);
-
-			res.json(selectedQuestions);
-		} else {
+		if (filteredQuestions.length == 0) {
 			res.send('No matching questions found in the library.');
+		} else if (numberOfQuestions) {
+			/* returning user selected number of questions */
+			let selectedQuestions;
+			if (numberOfQuestions > filteredQuestions.length) {
+				/* return all available questions if less than requested is available */
+				selectedQuestions = filteredQuestions;
+				res.json(selectedQuestions);
+				console.log(
+					`${numberOfQuestions} questions were requested, but only ${filteredQuestions.length} questions were found.`
+				);
+			} else {
+				/* return requested number of questions if enough is available */
+				selectedQuestions = returnNumberOfRandomQuestions(
+					filteredQuestions,
+					numberOfQuestions
+				);
+				res.json(selectedQuestions);
+			}
+		} else {
+			res.json(filteredQuestions);
 		}
 	} catch (err) {
 		res.status(500).send('Failed to read data');

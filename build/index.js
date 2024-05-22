@@ -85,7 +85,7 @@ app.get('/', (req, res) => {
     readData();
     res.send('Express + TypeScript Server');
 });
-//get questions by category and difficulty
+//get questions by user selected parameters
 app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = yield readData();
@@ -94,18 +94,33 @@ app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const difficulty = req.query.difficulty;
         const numberOfQuestions = parseInt(req.query.questions_number, 10);
         let filteredQuestions = questions;
+        // filtering questions
         if (category) {
             filteredQuestions = filteredQuestions.filter((question) => question.category === category);
         }
         if (difficulty) {
             filteredQuestions = filteredQuestions.filter((question) => question.difficulty === difficulty);
         }
-        if (filteredQuestions.length > 0) {
-            const selectedQuestions = returnNumberOfRandomQuestions(filteredQuestions, numberOfQuestions);
-            res.json(selectedQuestions);
+        if (filteredQuestions.length == 0) {
+            res.send('No matching questions found in the library.');
+        }
+        else if (numberOfQuestions) {
+            /* returning user selected number of questions */
+            let selectedQuestions;
+            if (numberOfQuestions > filteredQuestions.length) {
+                /* return all available questions if less than requested is available */
+                selectedQuestions = filteredQuestions;
+                res.json(selectedQuestions);
+                console.log(`${numberOfQuestions} questions were requested, but only ${filteredQuestions.length} questions were found.`);
+            }
+            else {
+                /* return requested number of questions if enough is available */
+                selectedQuestions = returnNumberOfRandomQuestions(filteredQuestions, numberOfQuestions);
+                res.json(selectedQuestions);
+            }
         }
         else {
-            res.send('No matching questions found in the library.');
+            res.json(filteredQuestions);
         }
     }
     catch (err) {
