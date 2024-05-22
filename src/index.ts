@@ -13,14 +13,14 @@ interface LibraryData {
 
 // request body template
 type Question = {
-	id: number;
+	id?: number;
 	category: string;
 	difficulty: 'easy' | 'medium' | 'hard';
 	question: string;
 	options: [string, string, string, string];
 	answer: string;
-	favourited: boolean;
-	timestamp: string;
+	favourited?: boolean;
+	timestamp?: string;
 	numberQus?: number; //number of questions determined by user query but not in library
 };
 
