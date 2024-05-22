@@ -17,7 +17,7 @@ type Question = {
 	category: string;
 	difficulty: 'easy' | 'medium' | 'hard';
 	question: string;
-	options: string[];
+	options: [string, string, string, string];
 	answer: string;
 	favourited: boolean;
 	timestamp: string;
