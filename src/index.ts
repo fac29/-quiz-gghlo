@@ -48,7 +48,7 @@ const writeData = async (content: Question) => {
 			console.log('The file has been updated!');
 		} else {
 			// add the new question to the database document
-			jsonDB.push(content);
+			jsonDB.push(content); //think this should be jsonDB.push(jsonString) or we just get rid of the jsonString variable?
 			//missing the ID creation
 			let updatedJsonString = JSON.stringify(jsonDB);
 			await fs.writeFile(library, updatedJsonString);
