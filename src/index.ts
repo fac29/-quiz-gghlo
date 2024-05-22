@@ -41,8 +41,8 @@ const writeData = async (content: Question) => {
 		// let jsonString = JSON.stringify(content); //do we need this as we don't use it?
 		let data = await fsPromises.readFile(library, 'utf8');
 		let jsonDB = JSON.parse(data);
-		let match = jsonDB.find((item: any) => item.id === content.id);
-		if (match) {
+		// let match = jsonDB.questions.find((item: any) => item.id === content.id);
+		if (content.id) {
 			let updatedJsonString = JSON.stringify(jsonDB);
 			await fs.writeFile(library, updatedJsonString);
 			console.log('The file has been updated!');
@@ -114,7 +114,11 @@ app.listen(port, () => {
 
 //section for create new question endpoint
 app.post('/questions', async (req: Request, res: Response) => {
+	console.log(req);
+	let qu: Question = JSON.parse(req.body);
+	console.log(qu);
 	try {
+		console.log(req.body);
 		const newQuestion = req.body;
 		console.log(newQuestion);
 		await writeData(newQuestion);
