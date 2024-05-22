@@ -18,6 +18,7 @@ const fsPromises = fs.promises;
 const library = 'data.json';
 const app = (0, express_1.default)();
 const port = 3210;
+app.use(express_1.default.json());
 //util section
 const readData = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -99,12 +100,10 @@ app.listen(port, () => {
 //section for create new question endpoint
 app.post('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(req);
-    let qu = JSON.parse(req.body);
-    console.log(qu);
+    console.log(req.body);
     try {
-        console.log(req.body);
         const newQuestion = req.body;
-        console.log(newQuestion);
+        console.log({ newQuestion });
         yield writeData(newQuestion);
         res.send('Question successfully added');
     }

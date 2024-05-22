@@ -7,6 +7,8 @@ const library = 'data.json';
 const app: Express = express();
 const port = 3210;
 
+app.use(express.json());
+
 interface LibraryData {
 	questions: Question[];
 }
@@ -44,7 +46,7 @@ const writeData = async (content: Question) => {
 		// let match = jsonDB.questions.find((item: any) => item.id === content.id);
 		if (content.id) {
 			let updatedJsonString = JSON.stringify(jsonDB);
-			await fs.writeFile(library, updatedJsonString);
+			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('The file has been updated!');
 		} else {
 			// add the new question to the database document
@@ -115,12 +117,10 @@ app.listen(port, () => {
 //section for create new question endpoint
 app.post('/questions', async (req: Request, res: Response) => {
 	console.log(req);
-	let qu: Question = JSON.parse(req.body);
-	console.log(qu);
+	console.log(req.body);
 	try {
-		console.log(req.body);
-		const newQuestion = req.body;
-		console.log(newQuestion);
+		const newQuestion: Question = req.body;
+		console.log({ newQuestion });
 		await writeData(newQuestion);
 		res.send('Question successfully added');
 	} catch (err) {
