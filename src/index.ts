@@ -38,7 +38,7 @@ const readData = async (): Promise<LibraryData> => {
 
 const writeData = async (content: Question) => {
 	try {
-		let jsonString = JSON.stringify(content);
+		let jsonString = JSON.stringify(content); //do we need this as we don't use it?
 		let data = await fs.readFile(library, 'utf8');
 		let jsonDB = JSON.parse(data);
 		let match = jsonDB.find((item: any) => item.id === content.id);
@@ -48,7 +48,10 @@ const writeData = async (content: Question) => {
 			console.log('The file has been updated!');
 		} else {
 			// add the new question to the database document
-			jsonDB.push(content); //think this should be jsonDB.push(jsonString) or we just get rid of the jsonString variable?
+			console.log(jsonDB.questions.length);
+			// id creation
+			content.id = jsonDB.questions.length + 1;
+			jsonDB.push(content);
 			//missing the ID creation
 			let updatedJsonString = JSON.stringify(jsonDB);
 			await fs.writeFile(library, updatedJsonString);

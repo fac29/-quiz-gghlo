@@ -43,7 +43,8 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
         }
         else {
             // add the new question to the database document
-            jsonDB.push(content);
+            console.log(jsonDB.questions.length);
+            jsonDB.push(content); //think this should be jsonDB.push(jsonString) or we just get rid of the jsonString variable?
             //missing the ID creation
             let updatedJsonString = JSON.stringify(jsonDB);
             yield fs.writeFile(library, updatedJsonString);
@@ -53,7 +54,7 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
     catch (err) {
         console.error(err);
     }
-    console.log();
+    // console.log();
 });
 //get endpoint setion
 app.get('/', (req, res) => {
