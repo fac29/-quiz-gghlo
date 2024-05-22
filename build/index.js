@@ -36,9 +36,16 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
         // let jsonString = JSON.stringify(content); //do we need this as we don't use it?
         let data = yield fsPromises.readFile(library, 'utf8');
         let jsonDB = JSON.parse(data);
-        // let match = jsonDB.questions.find((item: any) => item.id === content.id);
+        let match = jsonDB.questions.find((item) => item.id === content.id);
         if (content.id) {
-            let updatedJsonString = JSON.stringify(jsonDB);
+            console.log(content);
+            const updatedQuestions = jsonDB.questions.map((el) => {
+                if (el.id === content.id) {
+                    return Object.assign(Object.assign({}, el), content);
+                }
+                return el;
+            });
+            let updatedJsonString = JSON.stringify(updatedQuestions);
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('The file has been updated!');
         }
@@ -95,6 +102,16 @@ app.listen(port, () => {
     console.log('connected to the server is successfull');
 });
 //section for update endpoints
+app.put('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const updateQ = req.body;
+        yield writeData(updateQ);
+        res.send('Question successfully updated');
+    }
+    catch (err) {
+        console.log(err);
+    }
+}));
 //section for create new question endpoint
 app.post('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
