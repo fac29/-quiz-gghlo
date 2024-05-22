@@ -31,7 +31,7 @@ type Question = {
 const readData = async (): Promise<LibraryData> => {
 	try {
 		const data = await fsPromises.readFile(library, 'utf8');
-		console.log(data);
+		// console.log(data);
 		return JSON.parse(data) as LibraryData;
 	} catch (err) {
 		console.error(err);
@@ -49,11 +49,11 @@ const writeData = async (content: Question) => {
 			console.log(content);
 			const updatedQuestions = jsonDB.questions.map((el: Question) => {
 				if (el.id === content.id) {
-				  return { ...el, ...content };
+					return { ...el, ...content };
 				}
 				return el;
-			  });
-			
+			});
+
 			let updatedJsonString = JSON.stringify(updatedQuestions);
 			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('The file has been updated!');
@@ -77,6 +77,24 @@ const writeData = async (content: Question) => {
 	// console.log();
 };
 
+//return user determined number of questions
+
+function returnNumberOfRandomQuestions(questions: any[], n: number): any[] {
+	// Check if n questions are available
+	if (n <= 0 || n > questions.length) {
+		throw new Error(
+			'The number of questions selected is not available. Select smaller number.'
+		);
+	}
+
+	// Reorder questions randomly and select the first n elements
+	const randomlySelectedQuestions = questions
+		.sort(() => 0.5 - Math.random())
+		.slice(0, n);
+
+	return randomlySelectedQuestions;
+}
+
 //get endpoint setion
 app.get('/', (req: Request, res: Response) => {
 	readData();
@@ -90,7 +108,10 @@ app.get('/questions', async (req: Request, res: Response) => {
 		const questions = data.questions;
 		const category = req.query.category;
 		const difficulty = req.query.difficulty;
-
+		const numberOfQuestions = parseInt(
+			req.query.questions_number as string,
+			10
+		);
 		let filteredQuestions = questions;
 
 		if (category) {
@@ -106,7 +127,12 @@ app.get('/questions', async (req: Request, res: Response) => {
 		}
 
 		if (filteredQuestions.length > 0) {
-			res.json(filteredQuestions);
+			const selectedQuestions = returnNumberOfRandomQuestions(
+				filteredQuestions,
+				numberOfQuestions
+			);
+
+			res.json(selectedQuestions);
 		} else {
 			res.send('No matching questions found in the library.');
 		}
