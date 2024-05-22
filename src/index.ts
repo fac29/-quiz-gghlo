@@ -39,7 +39,7 @@ const writeData = async (content: any) => {
 			//missing the ID creation
 			let updatedJsonString = JSON.stringify(jsonDB);
 			await fs.writeFile(library, updatedJsonString);
-			console.log('The file has been saved!');
+			console.log('The file has been saved!'); //think this should be 'The question has been saved!'
 		}
 	} catch (err) {
 		console.error(err);
