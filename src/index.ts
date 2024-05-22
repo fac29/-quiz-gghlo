@@ -24,6 +24,7 @@ type Question = {
 	favourited?: boolean;
 	timestamp?: string;
 	numberQus?: number; //number of questions determined by user query but not in library
+	completed?: boolean;
 };
 
 //util section
