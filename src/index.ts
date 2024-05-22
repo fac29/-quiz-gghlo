@@ -27,7 +27,7 @@ type Question = {
 //util section
 const readData = async (): Promise<LibraryData> => {
 	try {
-		const data = await fs.readFile(library, 'utf8');
+		const data = await fsPromises.readFile(library, 'utf8');
 		console.log(data);
 		return JSON.parse(data) as LibraryData;
 	} catch (err) {
@@ -38,8 +38,8 @@ const readData = async (): Promise<LibraryData> => {
 
 const writeData = async (content: Question) => {
 	try {
-		let jsonString = JSON.stringify(content); //do we need this as we don't use it?
-		let data = await fs.readFile(library, 'utf8');
+		// let jsonString = JSON.stringify(content); //do we need this as we don't use it?
+		let data = await fsPromises.readFile(library, 'utf8');
 		let jsonDB = JSON.parse(data);
 		let match = jsonDB.find((item: any) => item.id === content.id);
 		if (match) {
@@ -48,9 +48,13 @@ const writeData = async (content: Question) => {
 			console.log('The file has been updated!');
 		} else {
 			// add the new question to the database document
-			console.log(jsonDB.questions.length);
 			// id creation
-			content.id = jsonDB.questions.length + 1;
+			let dbLength = jsonDB.questions.length;
+			console.log(dbLength);
+			content.id = dbLength + 1;
+			// timestamp creation
+			content.timestamp = new Date().toISOString();
+			content.favourited = false;
 			jsonDB.push(content);
 			//missing the ID creation
 			let updatedJsonString = JSON.stringify(jsonDB);
@@ -109,6 +113,16 @@ app.listen(port, () => {
 //section for update endpoints
 
 //section for create new question endpoint
+app.post('/questions', async (req: Request, res: Response) => {
+	try {
+		const newQuestion = req.body;
+		console.log(newQuestion);
+		await writeData(newQuestion);
+		res.send('Question successfully added');
+	} catch (err) {
+		console.log(err);
+	}
+});
 
 //delete question endpoint section
 app.delete('/questions/:id', async (req: Request, res: Response) => {

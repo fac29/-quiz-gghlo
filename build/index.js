@@ -21,7 +21,7 @@ const port = 3210;
 //util section
 const readData = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const data = yield fs.readFile(library, 'utf8');
+        const data = yield fsPromises.readFile(library, 'utf8');
         console.log(data);
         return JSON.parse(data);
     }
@@ -32,8 +32,8 @@ const readData = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        let jsonString = JSON.stringify(content);
-        let data = yield fs.readFile(library, 'utf8');
+        // let jsonString = JSON.stringify(content); //do we need this as we don't use it?
+        let data = yield fsPromises.readFile(library, 'utf8');
         let jsonDB = JSON.parse(data);
         let match = jsonDB.find((item) => item.id === content.id);
         if (match) {
@@ -43,8 +43,14 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
         }
         else {
             // add the new question to the database document
-            console.log(jsonDB.questions.length);
-            jsonDB.push(content); //think this should be jsonDB.push(jsonString) or we just get rid of the jsonString variable?
+            // id creation
+            let dbLength = jsonDB.questions.length;
+            console.log(dbLength);
+            content.id = dbLength + 1;
+            // timestamp creation
+            content.timestamp = new Date().toISOString();
+            content.favourited = false;
+            jsonDB.push(content);
             //missing the ID creation
             let updatedJsonString = JSON.stringify(jsonDB);
             yield fs.writeFile(library, updatedJsonString);
@@ -91,6 +97,17 @@ app.listen(port, () => {
 });
 //section for update endpoints
 //section for create new question endpoint
+app.post('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const newQuestion = req.body;
+        console.log(newQuestion);
+        yield writeData(newQuestion);
+        res.send('Question successfully added');
+    }
+    catch (err) {
+        console.log(err);
+    }
+}));
 //delete question endpoint section
 app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(parseInt(req.params.id));
