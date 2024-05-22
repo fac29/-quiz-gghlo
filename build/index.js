@@ -39,7 +39,7 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
         // let match = jsonDB.questions.find((item: any) => item.id === content.id);
         if (content.id) {
             let updatedJsonString = JSON.stringify(jsonDB);
-            yield fs.writeFile(library, updatedJsonString);
+            yield fsPromises.writeFile(library, updatedJsonString);
             console.log('The file has been updated!');
         }
         else {

@@ -60,7 +60,7 @@ const writeData = async (content: Question) => {
 			jsonDB.push(content);
 			//missing the ID creation
 			let updatedJsonString = JSON.stringify(jsonDB);
-			await fs.writeFile(library, updatedJsonString);
+			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('The file has been saved!');
 		}
 	} catch (err) {
@@ -116,8 +116,6 @@ app.listen(port, () => {
 
 //section for create new question endpoint
 app.post('/questions', async (req: Request, res: Response) => {
-	console.log(req);
-	console.log(req.body);
 	try {
 		const newQuestion: Question = req.body;
 		console.log({ newQuestion });
