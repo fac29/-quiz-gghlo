@@ -159,7 +159,9 @@ app.get('/questions', async (req: Request, res: Response) => {
 });
 
 app.listen(port, () => {
-	console.log('connected to the server is successfull');
+	console.log(
+		'Successfully connected to the server. Running at: http://localhost:3210/'
+	);
 });
 
 //section for update endpoints
