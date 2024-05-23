@@ -45,7 +45,7 @@ const writeData = async (content: Question) => {
 		let data = await fsPromises.readFile(library, 'utf8');
 		let jsonDB = JSON.parse(data);
 		let match = jsonDB.questions.find((item: any) => item.id === content.id);
-		if (content.id) {
+		if (match) {
 			console.log(content);
 			const updatedQuestions = jsonDB.questions.map((el: Question) => {
 				if (el.id === content.id) {
@@ -165,15 +165,14 @@ app.listen(port, () => {
 //section for update endpoints
 app.put('/questions', async (req: Request, res: Response) => {
 	try {
-		const updateQ : Question = req.body;
-		
+		const updateQ: Question = req.body;
+
 		await writeData(updateQ);
 		res.send('Question successfully updated');
 	} catch (err) {
 		console.log(err);
 	}
 });
-	
 
 //section for create new question endpoint
 app.post('/questions', async (req: Request, res: Response) => {
