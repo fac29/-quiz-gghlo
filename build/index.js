@@ -155,24 +155,24 @@ app.post('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function*
 }));
 //delete question endpoint section
 app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(parseInt(req.params.id));
-    try {
-        let id = req.params.id;
-        let deleteData = yield fsPromises.readFile(library, 'utf8');
-        let jsonDeleteData = JSON.parse(deleteData);
-        let qMatch = jsonDeleteData.questions.findIndex((item) => item.id === id);
-        if (qMatch) {
-            jsonDeleteData.questions.splice(qMatch, 1);
-            let updatedJsonString = JSON.stringify(jsonDeleteData);
+    let id = req.params.id;
+    let deleteData = yield fsPromises.readFile(library, 'utf8');
+    let jsonDeleteData = JSON.parse(deleteData);
+    let questionYass = jsonDeleteData.questions.filter((question) => question.id === parseInt(id));
+    if (questionYass.length > 0) {
+        try {
+            let qMatch = jsonDeleteData.questions.filter((question) => question.id !== parseInt(id));
+            let updatedJsonString = JSON.stringify(qMatch);
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('the question has been  deleted');
             res.send('question has successfully been deleted');
         }
-        else {
-            console.log(`Question with id ${id} not found`);
+        catch (err) {
+            console.log(err);
         }
     }
-    catch (err) {
-        console.log(err);
+    else {
+        console.log('please revise question id');
+        res.send('please revise question id');
     }
 }));

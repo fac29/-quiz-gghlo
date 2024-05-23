@@ -165,15 +165,14 @@ app.listen(port, () => {
 //section for update endpoints
 app.put('/questions', async (req: Request, res: Response) => {
 	try {
-		const updateQ : Question = req.body;
-		
+		const updateQ: Question = req.body;
+
 		await writeData(updateQ);
 		res.send('Question successfully updated');
 	} catch (err) {
 		console.log(err);
 	}
 });
-	
 
 //section for create new question endpoint
 app.post('/questions', async (req: Request, res: Response) => {
@@ -189,24 +188,26 @@ app.post('/questions', async (req: Request, res: Response) => {
 
 //delete question endpoint section
 app.delete('/questions/:id', async (req: Request, res: Response) => {
-	console.log(parseInt(req.params.id));
-	try {
-		let id = req.params.id;
-		let deleteData = await fsPromises.readFile(library, 'utf8');
-		let jsonDeleteData = JSON.parse(deleteData);
-		let qMatch = jsonDeleteData.questions.findIndex(
-			(item: any) => item.id === id
-		);
-		if (qMatch) {
-			jsonDeleteData.questions.splice(qMatch, 1);
-			let updatedJsonString = JSON.stringify(jsonDeleteData);
+	let id = req.params.id;
+	let deleteData = await fsPromises.readFile(library, 'utf8');
+	let jsonDeleteData = JSON.parse(deleteData);
+	let questionYass = jsonDeleteData.questions.filter(
+		(question: Question) => question.id === parseInt(id)
+	);
+	if (questionYass.length > 0) {
+		try {
+			let qMatch = jsonDeleteData.questions.filter(
+				(question: any) => question.id !== parseInt(id)
+			);
+			let updatedJsonString = JSON.stringify(qMatch);
 			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('the question has been  deleted');
 			res.send('question has successfully been deleted');
-		} else {
-			console.log(`Question with id ${id} not found`);
+		} catch (err) {
+			console.log(err);
 		}
-	} catch (err) {
-		console.log(err);
+	} else {
+		console.log('please revise question id');
+		res.send('please revise question id');
 	}
 });
