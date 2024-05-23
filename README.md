@@ -44,6 +44,74 @@ These are our endpoints and how we're using them.
 | /questions/:id | PUT         | JSON string | Update existing question with favouriting?                                                                    |
 | /questions/:id | DELETE      | JSON string | Delete existing question                                                                                      |
 
+## Testing endpoints
+
+To test the endpoints, you will need to install Postman or Bruno and then do the following:
+
+Server path: http://localhost:3210/
+
+1. GET
+   In order to retrieve questions, you can retrieve the whole database or optionally filter by category, difficulty and number of questions. For example, you can use the following path to find easy Science questions: http://localhost:3210/questions?category=Science&difficulty=easy&questions_number=1
+
+   You should receive the following result:
+   ```
+    [
+        {
+            "id": 1,
+            "category": "Science",
+            "difficulty": "easy",
+            "question": "What is the chemical symbol for Hydrogen?",
+            "options": [
+                "H",
+                "He",
+                "Hy",
+                "Ho"
+            ],
+            "answer": "H",
+            "favourited": true,
+            "timestamp": "2023-04-01T10:00:00Z"
+        }
+    ]
+   ```
+   
+3. POST
+  In order to create/add questions, you should use this endpoint: http://localhost:3210/questions/
+
+  Note that id, timestamp and favourited are automatically generated. In future it would be useful to add means to favourite a created question at the point of creation.
+
+  Here is an example question object you can submit in the POST body:
+  ```
+  {
+			"category": "History",
+			"difficulty": "easy",
+			"question": "When was Princess Diana born?",
+			"options": ["01/07/1998", "07/07/1998", "02/02/1961", "09/09/1990"],
+			"answer": "02/02/1961",
+		}
+  ```
+
+5. PUT
+  In order to update existing questions, you should use this endpoint: http://localhost:3210/questions/:id
+
+  Here is an example object you can submit in the PUT body:
+  ```
+  {
+      "id": 31,
+      "category": "History",
+			"difficulty": "easy",
+			"question": "When did Princess Diana die?",
+			"options": ["01/07/1998", "07/07/1998", "02/02/1961", "09/09/1990"],
+			"answer": "07/07/1998",
+		}
+  ```
+   
+7. DELETE
+   In order to delete existing questions, you should use this endpoint: http://localhost:3210/questions/:id
+
+   Here is an example path you can submit on Postman/Bruno: http://localhost:3210/questions/31
+
+   When you check data.json, the question should no longer be there.
+
 # Prettier configuration
 
 We are using Prettier to ensure our codebase is formatted in the same way and avoid conflicts.
