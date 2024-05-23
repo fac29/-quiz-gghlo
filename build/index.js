@@ -37,7 +37,7 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
         let data = yield fsPromises.readFile(library, 'utf8');
         let jsonDB = JSON.parse(data);
         let match = jsonDB.questions.find((item) => item.id === content.id);
-        if (content.id) {
+        if (match) {
             console.log(content);
             const updatedQuestions = jsonDB.questions.map((el) => {
                 if (el.id === content.id) {
