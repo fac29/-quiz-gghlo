@@ -37,7 +37,7 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
         let data = yield fsPromises.readFile(library, 'utf8');
         let jsonDB = JSON.parse(data);
         let match = jsonDB.questions.find((item) => item.id === content.id);
-        if (match) {
+        if (content.id) {
             console.log(content);
             const updatedQuestions = jsonDB.questions.map((el) => {
                 if (el.id === content.id) {
@@ -81,10 +81,10 @@ function returnNumberOfRandomQuestions(questions, n) {
     return randomlySelectedQuestions;
 }
 //get endpoint setion
-app.get('/', (req, res) => {
-    readData();
-    res.send('Express + TypeScript Server');
-});
+app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = yield readData();
+    res.json(data);
+}));
 //get questions by user selected parameters
 app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -155,24 +155,24 @@ app.post('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function*
 }));
 //delete question endpoint section
 app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    let id = req.params.id;
-    let deleteData = yield fsPromises.readFile(library, 'utf8');
-    let jsonDeleteData = JSON.parse(deleteData);
-    let questionYass = jsonDeleteData.questions.filter((question) => question.id === parseInt(id));
-    if (questionYass.length > 0) {
-        try {
-            let qMatch = jsonDeleteData.questions.filter((question) => question.id !== parseInt(id));
-            let updatedJsonString = JSON.stringify(qMatch);
+    console.log(parseInt(req.params.id));
+    try {
+        let id = req.params.id;
+        let deleteData = yield fsPromises.readFile(library, 'utf8');
+        let jsonDeleteData = JSON.parse(deleteData);
+        let qMatch = jsonDeleteData.questions.findIndex((item) => item.id === id);
+        if (qMatch) {
+            jsonDeleteData.questions.splice(qMatch, 1);
+            let updatedJsonString = JSON.stringify(jsonDeleteData);
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('the question has been  deleted');
             res.send('question has successfully been deleted');
         }
-        catch (err) {
-            console.log(err);
+        else {
+            console.log(`Question with id ${id} not found`);
         }
     }
-    else {
-        console.log('please revise question id');
-        res.send('please revise question id');
+    catch (err) {
+        console.log(err);
     }
 }));
