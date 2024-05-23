@@ -54,7 +54,7 @@ const writeData = async (content: Question) => {
 				return el;
 			});
 
-			let updatedJsonString = JSON.stringify(updatedQuestions);
+			let updatedJsonString = JSON.stringify(updatedQuestions, null, ' ');
 			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('The file has been updated!');
 		} else {
@@ -66,7 +66,7 @@ const writeData = async (content: Question) => {
 			content.timestamp = new Date().toISOString();
 			content.favourited = false;
 			jsonDB.questions.push(content);
-			let updatedJsonString = JSON.stringify(jsonDB);
+			let updatedJsonString = JSON.stringify(jsonDB, null, ' ');
 			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('The file has been saved!');
 		}
@@ -198,7 +198,7 @@ app.delete('/questions/:id', async (req: Request, res: Response) => {
 		);
 		if (qMatch) {
 			jsonDeleteData.questions.splice(qMatch, 1);
-			let updatedJsonString = JSON.stringify(jsonDeleteData);
+			let updatedJsonString = JSON.stringify(jsonDeleteData, null, ' ');
 			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('the question has been  deleted');
 			res.send('question has successfully been deleted');
