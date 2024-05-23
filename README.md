@@ -1,6 +1,34 @@
 # -quiz-gghlo
 
+# How to use this locally
+
+## Prerequisites
+
+Our project uses Express.JS with Typescript and Node. These are the versions we're running which can be installed with `npm install`:
+
+- Express: 4.17.21
+- Node: 20.12.12
+- Typescript: 5.4.5
+
+## Installation
+
+Here are instructions for how to install this locally on the repo:
+
+1. Clone the repo
+
+`git clone https://github.com/fac29/-quiz-gghlo`
+
+2. Install NPM packages
+
+`npm install`
+
+3. Enter the following script to create the `build/index.js` and runs the server.
+
+`npm start`
+
 # API Endpoints
+
+These are our endpoints and how we're using them.
 
 | URI            | HTTP Method | POST body   | Result                                                                                            |
 | -------------- | ----------- | ----------- | ------------------------------------------------------------------------------------------------- |
