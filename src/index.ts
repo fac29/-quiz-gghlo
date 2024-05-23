@@ -164,16 +164,29 @@ app.listen(port, () => {
 	);
 });
 
-//section for update endpoints
-app.put('/questions', async (req: Request, res: Response) => {
-	try {
-		const updateQ: Question = req.body;
 
+//section for update endpoints
+app.put('/questions/:id', async (req: Request, res: Response) => {
+	let id = req.params.id;
+		let deleteData = await fsPromises.readFile(library, 'utf8');
+		let jsonDeleteData = JSON.parse(deleteData);
+		let qMatch = jsonDeleteData.questions.findIndex(
+			(item: any) => item.id === id
+		);
+		
+	if (qMatch) {try {
+		const updateQ : Question = req.body;
+		
 		await writeData(updateQ);
 		res.send('Question successfully updated');
 	} catch (err) {
 		console.log(err);
 	}
+		
+	} else { console.log("please enter the correct id")
+		
+	}
+	
 });
 
 //section for create new question endpoint
