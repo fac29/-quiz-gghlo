@@ -81,10 +81,10 @@ function returnNumberOfRandomQuestions(questions, n) {
     return randomlySelectedQuestions;
 }
 //get endpoint setion
-app.get('/', (req, res) => {
-    readData();
-    res.send('Express + TypeScript Server');
-});
+app.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const data = yield readData();
+    res.json(data);
+}));
 //get questions by user selected parameters
 app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -128,7 +128,7 @@ app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 }));
 app.listen(port, () => {
-    console.log('connected to the server is successfull');
+    console.log('Successfully connected to the server. Running at: http://localhost:3210/');
 });
 //section for update endpoints
 app.put('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

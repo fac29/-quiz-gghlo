@@ -99,9 +99,9 @@ function returnNumberOfRandomQuestions<Question>(
 }
 
 //get endpoint setion
-app.get('/', (req: Request, res: Response) => {
-	readData();
-	res.send('Express + TypeScript Server');
+app.get('/', async (req: Request, res: Response) => {
+	const data = await readData();
+	res.json(data);
 });
 
 //get questions by user selected parameters
