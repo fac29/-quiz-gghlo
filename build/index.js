@@ -37,7 +37,7 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
         let data = yield fsPromises.readFile(library, 'utf8');
         let jsonDB = JSON.parse(data);
         let match = jsonDB.questions.find((item) => item.id === content.id);
-        if (content.id) {
+        if (match) {
             console.log(content);
             const updatedQuestions = jsonDB.questions.map((el) => {
                 if (el.id === content.id) {
@@ -128,7 +128,7 @@ app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 }));
 app.listen(port, () => {
-    console.log('connected to the server is successfull');
+    console.log('Successfully connected to the server. Running at: http://localhost:3210/');
 });
 //section for update endpoints
 app.put('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -167,11 +167,12 @@ app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
             console.log('the question has been  deleted');
             res.send('question has successfully been deleted');
         }
-        else {
-            console.log(`Question with id ${id} not found`);
+        catch (err) {
+            console.log(err);
         }
     }
-    catch (err) {
-        console.log(err);
+    else {
+        console.log('please revise question id');
+        res.send('please revise question id');
     }
 }));
