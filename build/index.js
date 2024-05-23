@@ -45,7 +45,7 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
                 }
                 return el;
             });
-            let updatedJsonString = JSON.stringify(updatedQuestions);
+            let updatedJsonString = JSON.stringify(updatedQuestions, null, ' ');
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('The file has been updated!');
         }
@@ -58,7 +58,7 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
             content.timestamp = new Date().toISOString();
             content.favourited = false;
             jsonDB.questions.push(content);
-            let updatedJsonString = JSON.stringify(jsonDB);
+            let updatedJsonString = JSON.stringify(jsonDB, null, ' ');
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('The file has been saved!');
         }
@@ -155,15 +155,14 @@ app.post('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function*
 }));
 //delete question endpoint section
 app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(parseInt(req.params.id));
-    try {
-        let id = req.params.id;
-        let deleteData = yield fsPromises.readFile(library, 'utf8');
-        let jsonDeleteData = JSON.parse(deleteData);
-        let qMatch = jsonDeleteData.questions.findIndex((item) => item.id === id);
-        if (qMatch) {
-            jsonDeleteData.questions.splice(qMatch, 1);
-            let updatedJsonString = JSON.stringify(jsonDeleteData);
+    let id = req.params.id;
+    let deleteData = yield fsPromises.readFile(library, 'utf8');
+    let jsonDeleteData = JSON.parse(deleteData);
+    let questionYass = jsonDeleteData.questions.filter((question) => question.id === parseInt(id));
+    if (questionYass.length > 0) {
+        try {
+            let qMatch = jsonDeleteData.questions.filter((question) => question.id !== parseInt(id));
+            let updatedJsonString = JSON.stringify(qMatch, null, ' ');
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('the question has been  deleted');
             res.send('question has successfully been deleted');
