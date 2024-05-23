@@ -45,7 +45,7 @@ const writeData = async (content: Question) => {
 		let data = await fsPromises.readFile(library, 'utf8');
 		let jsonDB = JSON.parse(data);
 		let match = jsonDB.questions.find((item: any) => item.id === content.id);
-		if (content.id) {
+		if (match) {
 			console.log(content);
 			const updatedQuestions = jsonDB.questions.map((el: Question) => {
 				if (el.id === content.id) {
@@ -54,7 +54,7 @@ const writeData = async (content: Question) => {
 				return el;
 			});
 
-			let updatedJsonString = JSON.stringify(updatedQuestions);
+			let updatedJsonString = JSON.stringify(updatedQuestions, null, ' ');
 			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('The file has been updated!');
 		} else {
@@ -66,7 +66,7 @@ const writeData = async (content: Question) => {
 			content.timestamp = new Date().toISOString();
 			content.favourited = false;
 			jsonDB.questions.push(content);
-			let updatedJsonString = JSON.stringify(jsonDB);
+			let updatedJsonString = JSON.stringify(jsonDB, null, ' ');
 			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('The file has been saved!');
 		}
@@ -190,24 +190,26 @@ app.post('/questions', async (req: Request, res: Response) => {
 
 //delete question endpoint section
 app.delete('/questions/:id', async (req: Request, res: Response) => {
-	console.log(parseInt(req.params.id));
-	try {
-		let id = req.params.id;
-		let deleteData = await fsPromises.readFile(library, 'utf8');
-		let jsonDeleteData = JSON.parse(deleteData);
-		let qMatch = jsonDeleteData.questions.findIndex(
-			(item: any) => item.id === id
-		);
-		if (qMatch) {
-			jsonDeleteData.questions.splice(qMatch, 1);
-			let updatedJsonString = JSON.stringify(jsonDeleteData);
+	let id = req.params.id;
+	let deleteData = await fsPromises.readFile(library, 'utf8');
+	let jsonDeleteData = JSON.parse(deleteData);
+	let questionYass = jsonDeleteData.questions.filter(
+		(question: Question) => question.id === parseInt(id)
+	);
+	if (questionYass.length > 0) {
+		try {
+			let qMatch = jsonDeleteData.questions.filter(
+				(question: any) => question.id !== parseInt(id)
+			);
+			let updatedJsonString = JSON.stringify(qMatch, null, ' ');
 			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('the question has been  deleted');
 			res.send('question has successfully been deleted');
-		} else {
-			console.log(`Question with id ${id} not found`);
+		} catch (err) {
+			console.log(err);
 		}
-	} catch (err) {
-		console.log(err);
+	} else {
+		console.log('please revise question id');
+		res.send('please revise question id');
 	}
 });
