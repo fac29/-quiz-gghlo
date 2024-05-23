@@ -79,7 +79,10 @@ const writeData = async (content: Question) => {
 
 //return user determined number of questions
 
-function returnNumberOfRandomQuestions<T>(questions: T[], n: number): any[] {
+function returnNumberOfRandomQuestions<Question>(
+	questions: Question[],
+	n: number
+): Question[] {
 	// Check if n questions are available
 	if (n <= 0 || n > questions.length) {
 		throw new Error(
