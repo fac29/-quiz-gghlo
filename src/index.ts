@@ -31,7 +31,7 @@ type Question = {
 const readData = async (): Promise<LibraryData> => {
 	try {
 		const data = await fsPromises.readFile(library, 'utf8');
-		console.log(data);
+		// console.log(data);
 		return JSON.parse(data) as LibraryData;
 	} catch (err) {
 		console.error(err);
@@ -49,11 +49,11 @@ const writeData = async (content: Question) => {
 			console.log(content);
 			const updatedQuestions = jsonDB.questions.map((el: Question) => {
 				if (el.id === content.id) {
-				  return { ...el, ...content };
+					return { ...el, ...content };
 				}
 				return el;
-			  });
-			
+			});
+
 			let updatedJsonString = JSON.stringify(updatedQuestions);
 			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('The file has been updated!');
@@ -77,22 +77,47 @@ const writeData = async (content: Question) => {
 	// console.log();
 };
 
+//return user determined number of questions
+
+function returnNumberOfRandomQuestions<Question>(
+	questions: Question[],
+	n: number
+): Question[] {
+	// Check if n questions are available
+	if (n <= 0 || n > questions.length) {
+		throw new Error(
+			'The number of questions selected is not available. Select smaller number.'
+		);
+	}
+
+	// Reorder questions randomly and select the first n elements
+	const randomlySelectedQuestions = questions
+		.sort(() => 0.5 - Math.random())
+		.slice(0, n);
+
+	return randomlySelectedQuestions;
+}
+
 //get endpoint setion
 app.get('/', (req: Request, res: Response) => {
 	readData();
 	res.send('Express + TypeScript Server');
 });
 
-//get questions by category and difficulty
+//get questions by user selected parameters
 app.get('/questions', async (req: Request, res: Response) => {
 	try {
 		const data = await readData();
 		const questions = data.questions;
 		const category = req.query.category;
 		const difficulty = req.query.difficulty;
-
+		const numberOfQuestions = parseInt(
+			req.query.questions_number as string,
+			10
+		);
 		let filteredQuestions = questions;
 
+		// filtering questions
 		if (category) {
 			filteredQuestions = filteredQuestions.filter(
 				(question: any) => question.category === category
@@ -105,10 +130,28 @@ app.get('/questions', async (req: Request, res: Response) => {
 			);
 		}
 
-		if (filteredQuestions.length > 0) {
-			res.json(filteredQuestions);
-		} else {
+		if (filteredQuestions.length == 0) {
 			res.send('No matching questions found in the library.');
+		} else if (numberOfQuestions) {
+			/* returning user selected number of questions */
+			let selectedQuestions;
+			if (numberOfQuestions > filteredQuestions.length) {
+				/* return all available questions if less than requested is available */
+				selectedQuestions = filteredQuestions;
+				res.json(selectedQuestions);
+				console.log(
+					`${numberOfQuestions} questions were requested, but only ${filteredQuestions.length} questions were found.`
+				);
+			} else {
+				/* return requested number of questions if enough is available */
+				selectedQuestions = returnNumberOfRandomQuestions(
+					filteredQuestions,
+					numberOfQuestions
+				);
+				res.json(selectedQuestions);
+			}
+		} else {
+			res.json(filteredQuestions);
 		}
 	} catch (err) {
 		res.status(500).send('Failed to read data');

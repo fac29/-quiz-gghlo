@@ -23,7 +23,7 @@ app.use(express_1.default.json());
 const readData = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = yield fsPromises.readFile(library, 'utf8');
-        console.log(data);
+        // console.log(data);
         return JSON.parse(data);
     }
     catch (err) {
@@ -68,30 +68,59 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
     }
     // console.log();
 });
+//return user determined number of questions
+function returnNumberOfRandomQuestions(questions, n) {
+    // Check if n questions are available
+    if (n <= 0 || n > questions.length) {
+        throw new Error('The number of questions selected is not available. Select smaller number.');
+    }
+    // Reorder questions randomly and select the first n elements
+    const randomlySelectedQuestions = questions
+        .sort(() => 0.5 - Math.random())
+        .slice(0, n);
+    return randomlySelectedQuestions;
+}
 //get endpoint setion
 app.get('/', (req, res) => {
     readData();
     res.send('Express + TypeScript Server');
 });
-//get questions by category and difficulty
+//get questions by user selected parameters
 app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = yield readData();
         const questions = data.questions;
         const category = req.query.category;
         const difficulty = req.query.difficulty;
+        const numberOfQuestions = parseInt(req.query.questions_number, 10);
         let filteredQuestions = questions;
+        // filtering questions
         if (category) {
             filteredQuestions = filteredQuestions.filter((question) => question.category === category);
         }
         if (difficulty) {
             filteredQuestions = filteredQuestions.filter((question) => question.difficulty === difficulty);
         }
-        if (filteredQuestions.length > 0) {
-            res.json(filteredQuestions);
+        if (filteredQuestions.length == 0) {
+            res.send('No matching questions found in the library.');
+        }
+        else if (numberOfQuestions) {
+            /* returning user selected number of questions */
+            let selectedQuestions;
+            if (numberOfQuestions > filteredQuestions.length) {
+                /* return all available questions if less than requested is available */
+                selectedQuestions = filteredQuestions;
+                res.json(selectedQuestions);
+                console.log(`${numberOfQuestions} questions were requested, but only ${filteredQuestions.length} questions were found.`);
+            }
+            else {
+                /* return requested number of questions if enough is available */
+                selectedQuestions = returnNumberOfRandomQuestions(filteredQuestions, numberOfQuestions);
+                res.json(selectedQuestions);
+            }
         }
         else {
-            res.send('No matching questions found in the library.');
+            res.json(filteredQuestions);
         }
     }
     catch (err) {
