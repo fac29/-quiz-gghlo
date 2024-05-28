@@ -36,10 +36,10 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
         // let jsonString = JSON.stringify(content); //do we need this as we don't use it?
         let data = yield fsPromises.readFile(library, 'utf8');
         let jsonDB = JSON.parse(data);
-        let match = jsonDB.questions.find((item) => item.id === content.id);
+        let match = jsonDB.find((item) => item.id === content.id);
         if (match) {
             console.log(content);
-            const updatedQuestions = jsonDB.questions.map((el) => {
+            const updatedQuestions = jsonDB.map((el) => {
                 if (el.id === content.id) {
                     return Object.assign(Object.assign({}, el), content);
                 }
@@ -52,12 +52,12 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
         else {
             // add the new question to the database document
             // id creation
-            let dbLength = jsonDB.questions.length;
+            let dbLength = jsonDB.length;
             content.id = dbLength + 1;
             // timestamp creation
             content.timestamp = new Date().toISOString();
             content.favourited = false;
-            jsonDB.questions.push(content);
+            jsonDB.push(content);
             let updatedJsonString = JSON.stringify(jsonDB, null, ' ');
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('The file has been saved!');
@@ -131,14 +131,23 @@ app.listen(port, () => {
     console.log('Successfully connected to the server. Running at: http://localhost:3210/');
 });
 //section for update endpoints
-app.put('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const updateQ = req.body;
-        yield writeData(updateQ);
-        res.send('Question successfully updated');
+app.put('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let id = req.params.id;
+    let deleteData = yield fsPromises.readFile(library, 'utf8');
+    let jsonDeleteData = JSON.parse(deleteData);
+    let qMatch = jsonDeleteData.findIndex((item) => item.id === id);
+    if (qMatch) {
+        try {
+            const updateQ = req.body;
+            yield writeData(updateQ);
+            res.send('Question successfully updated');
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
-    catch (err) {
-        console.log(err);
+    else {
+        console.log('please enter the correct id');
     }
 }));
 //section for create new question endpoint
@@ -158,10 +167,10 @@ app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
     let id = req.params.id;
     let deleteData = yield fsPromises.readFile(library, 'utf8');
     let jsonDeleteData = JSON.parse(deleteData);
-    let questionYass = jsonDeleteData.questions.filter((question) => question.id === parseInt(id));
+    let questionYass = jsonDeleteData.filter((question) => question.id === parseInt(id));
     if (questionYass.length > 0) {
         try {
-            let qMatch = jsonDeleteData.questions.filter((question) => question.id !== parseInt(id));
+            let qMatch = jsonDeleteData.filter((question) => question.id !== parseInt(id));
             let updatedJsonString = JSON.stringify(qMatch, null, ' ');
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('the question has been  deleted');

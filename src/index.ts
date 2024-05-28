@@ -44,10 +44,10 @@ const writeData = async (content: Question) => {
 		// let jsonString = JSON.stringify(content); //do we need this as we don't use it?
 		let data = await fsPromises.readFile(library, 'utf8');
 		let jsonDB = JSON.parse(data);
-		let match = jsonDB.questions.find((item: any) => item.id === content.id);
+		let match = jsonDB.find((item: any) => item.id === content.id);
 		if (match) {
 			console.log(content);
-			const updatedQuestions = jsonDB.questions.map((el: Question) => {
+			const updatedQuestions = jsonDB.map((el: Question) => {
 				if (el.id === content.id) {
 					return { ...el, ...content };
 				}
@@ -60,12 +60,12 @@ const writeData = async (content: Question) => {
 		} else {
 			// add the new question to the database document
 			// id creation
-			let dbLength = jsonDB.questions.length;
+			let dbLength = jsonDB.length;
 			content.id = dbLength + 1;
 			// timestamp creation
 			content.timestamp = new Date().toISOString();
 			content.favourited = false;
-			jsonDB.questions.push(content);
+			jsonDB.push(content);
 			let updatedJsonString = JSON.stringify(jsonDB, null, ' ');
 			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('The file has been saved!');
@@ -164,29 +164,25 @@ app.listen(port, () => {
 	);
 });
 
-
 //section for update endpoints
 app.put('/questions/:id', async (req: Request, res: Response) => {
 	let id = req.params.id;
-		let deleteData = await fsPromises.readFile(library, 'utf8');
-		let jsonDeleteData = JSON.parse(deleteData);
-		let qMatch = jsonDeleteData.questions.findIndex(
-			(item: any) => item.id === id
-		);
-		
-	if (qMatch) {try {
-		const updateQ : Question = req.body;
-		
-		await writeData(updateQ);
-		res.send('Question successfully updated');
-	} catch (err) {
-		console.log(err);
+	let deleteData = await fsPromises.readFile(library, 'utf8');
+	let jsonDeleteData = JSON.parse(deleteData);
+	let qMatch = jsonDeleteData.findIndex((item: any) => item.id === id);
+
+	if (qMatch) {
+		try {
+			const updateQ: Question = req.body;
+
+			await writeData(updateQ);
+			res.send('Question successfully updated');
+		} catch (err) {
+			console.log(err);
+		}
+	} else {
+		console.log('please enter the correct id');
 	}
-		
-	} else { console.log("please enter the correct id")
-		
-	}
-	
 });
 
 //section for create new question endpoint
@@ -206,12 +202,12 @@ app.delete('/questions/:id', async (req: Request, res: Response) => {
 	let id = req.params.id;
 	let deleteData = await fsPromises.readFile(library, 'utf8');
 	let jsonDeleteData = JSON.parse(deleteData);
-	let questionYass = jsonDeleteData.questions.filter(
+	let questionYass = jsonDeleteData.filter(
 		(question: Question) => question.id === parseInt(id)
 	);
 	if (questionYass.length > 0) {
 		try {
-			let qMatch = jsonDeleteData.questions.filter(
+			let qMatch = jsonDeleteData.filter(
 				(question: any) => question.id !== parseInt(id)
 			);
 			let updatedJsonString = JSON.stringify(qMatch, null, ' ');
