@@ -68,6 +68,11 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
     }
     // console.log();
 });
+// converts boolean strings to booleans
+function parseBoolean(string) {
+    return string === "true" ? true : string === "false" ? false : undefined;
+}
+;
 //return user determined number of questions
 function returnNumberOfRandomQuestions(questions, n) {
     // Check if n questions are available
@@ -92,9 +97,16 @@ app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const questions = data.questions;
         const category = req.query.category;
         const difficulty = req.query.difficulty;
+        const favourite = parseBoolean(req.query.favourite);
         const numberOfQuestions = parseInt(req.query.questions_number, 10);
         let filteredQuestions = questions;
+        // console.log(filteredQuestions);
         // filtering questions
+        if (favourite) {
+            console.log(favourite);
+            filteredQuestions = filteredQuestions.filter((question) => question.favourited === true);
+        }
+        console.log(filteredQuestions);
         if (category) {
             filteredQuestions = filteredQuestions.filter((question) => question.category === category);
         }
@@ -135,7 +147,6 @@ app.put('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, functi
     let id = req.params.id;
     let deleteData = yield fsPromises.readFile(library, 'utf8');
     let jsonDeleteData = JSON.parse(deleteData);
-    console.log(jsonDeleteData);
     let qMatch = jsonDeleteData.questions.findIndex((item) => item.id === id);
     if (qMatch) {
         try {
@@ -155,7 +166,6 @@ app.put('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, functi
 app.post('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const newQuestion = req.body;
-        console.log({ newQuestion });
         yield writeData(newQuestion);
         res.send('Question successfully added');
     }

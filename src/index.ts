@@ -77,6 +77,11 @@ const writeData = async (content: Question) => {
 	// console.log();
 };
 
+// converts boolean strings to booleans
+function parseBoolean(string: any) {
+	return string === "true" ? true : string === "false" ? false : undefined;
+  };
+
 //return user determined number of questions
 
 function returnNumberOfRandomQuestions<Question>(
@@ -111,6 +116,7 @@ app.get('/questions', async (req: Request, res: Response) => {
 		const questions = data.questions;
 		const category = req.query.category;
 		const difficulty = req.query.difficulty;
+		const favourite = parseBoolean(req.query.favourite);
 		const numberOfQuestions = parseInt(
 			req.query.questions_number as string,
 			10
@@ -118,6 +124,12 @@ app.get('/questions', async (req: Request, res: Response) => {
 		let filteredQuestions = questions;
 
 		// filtering questions
+		if (favourite) {
+			filteredQuestions = filteredQuestions.filter(
+				(question: any) => question.favourited === true
+			);
+		}
+
 		if (category) {
 			filteredQuestions = filteredQuestions.filter(
 				(question: any) => question.category === category
