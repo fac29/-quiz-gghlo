@@ -172,9 +172,7 @@ app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
     if (questionYass.length > 0) {
         try {
             let qMatch = jsonDeleteData.questions.filter((question) => question.id !== parseInt(id));
-            // console.log(qMatch);
             let updatedJsonString = JSON.stringify({ questions: qMatch }, null, ' ');
-            // console.log(updatedJsonString);
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('the question has been  deleted');
             res.send('question has successfully been deleted');

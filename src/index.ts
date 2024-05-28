@@ -169,7 +169,6 @@ app.put('/questions/:id', async (req: Request, res: Response) => {
 	let id = req.params.id;
 	let deleteData = await fsPromises.readFile(library, 'utf8');
 	let jsonDeleteData = JSON.parse(deleteData);
-	console.log(jsonDeleteData);
 	let qMatch = jsonDeleteData.questions.findIndex(
 		(item: any) => item.id === id
 	);
@@ -192,7 +191,6 @@ app.put('/questions/:id', async (req: Request, res: Response) => {
 app.post('/questions', async (req: Request, res: Response) => {
 	try {
 		const newQuestion: Question = req.body;
-		console.log({ newQuestion });
 		await writeData(newQuestion);
 		res.send('Question successfully added');
 	} catch (err) {
