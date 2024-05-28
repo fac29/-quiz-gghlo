@@ -122,16 +122,13 @@ app.get('/questions', async (req: Request, res: Response) => {
 			10
 		);
 		let filteredQuestions = questions;
-		// console.log(filteredQuestions);
+
 		// filtering questions
 		if (favourite) {
-			console.log(favourite);
 			filteredQuestions = filteredQuestions.filter(
 				(question: any) => question.favourited === true
 			);
 		}
-
-		console.log(filteredQuestions);
 
 		if (category) {
 			filteredQuestions = filteredQuestions.filter(
