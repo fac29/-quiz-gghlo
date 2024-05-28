@@ -131,14 +131,24 @@ app.listen(port, () => {
     console.log('Successfully connected to the server. Running at: http://localhost:3210/');
 });
 //section for update endpoints
-app.put('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const updateQ = req.body;
-        yield writeData(updateQ);
-        res.send('Question successfully updated');
+app.put('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let id = req.params.id;
+    let deleteData = yield fsPromises.readFile(library, 'utf8');
+    let jsonDeleteData = JSON.parse(deleteData);
+    console.log(jsonDeleteData);
+    let qMatch = jsonDeleteData.questions.findIndex((item) => item.id === id);
+    if (qMatch) {
+        try {
+            const updateQ = req.body;
+            yield writeData(updateQ);
+            res.send('Question successfully updated');
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
-    catch (err) {
-        console.log(err);
+    else {
+        console.log('please enter the correct id');
     }
 }));
 //section for create new question endpoint
@@ -162,7 +172,9 @@ app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
     if (questionYass.length > 0) {
         try {
             let qMatch = jsonDeleteData.questions.filter((question) => question.id !== parseInt(id));
-            let updatedJsonString = JSON.stringify(qMatch, null, ' ');
+            // console.log(qMatch);
+            let updatedJsonString = JSON.stringify({ questions: qMatch }, null, ' ');
+            // console.log(updatedJsonString);
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('the question has been  deleted');
             res.send('question has successfully been deleted');
