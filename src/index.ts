@@ -238,7 +238,7 @@ app.delete('/questions/:id', async (req: Request, res: Response) => {
 
 
 //override the intial values of favourited to false. append this to the element. Create a completed to false add this to the json object. 
-app.patch('/reset', async (req: Request, res: Response) => {
+app.put('/reset', async (req: Request, res: Response) => {
 	
 	try {
         let reWriteData = await fsPromises.readFile(library, 'utf8');

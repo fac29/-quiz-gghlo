@@ -194,21 +194,19 @@ app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
 }));
 //override the intial values of favourited to false. append this to the element. Create a completed to false add this to the json object. 
-app.patch('/reset', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('testing');
+app.put('/reset', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let reWriteData = yield fsPromises.readFile(library, 'utf8');
         let jsonReWriteData = JSON.parse(reWriteData);
         // Loop through each question and reset properties
-        console.log(jsonReWriteData.questions);
         let parsedJsonReWriteData = jsonReWriteData.questions.map((question) => (Object.assign(Object.assign({}, question), { favourited: false, completed: false })));
         // Rewrite database with updated data
         let addingFalse = JSON.stringify({ questions: parsedJsonReWriteData }, null, 2); // Assuming "questions" is the key for your array of questions
         yield fsPromises.writeFile(library, addingFalse);
-        res.send('Questions have been successfully reset');
+        res.send('Favourite has been reset & Completed been reset');
     }
     catch (error) {
-        console.error('Error occurred while resetting questions:', error);
-        res.status(500).send('Error occurred while resetting questions');
+        console.error('Error occurred while resetting favourite:', error);
+        res.status(500).send('Error occurred while attempting to reset favourite');
     }
 }));
