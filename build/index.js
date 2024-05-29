@@ -100,13 +100,10 @@ app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const favourite = parseBoolean(req.query.favourite);
         const numberOfQuestions = parseInt(req.query.questions_number, 10);
         let filteredQuestions = questions;
-        // console.log(filteredQuestions);
         // filtering questions
         if (favourite) {
-            console.log(favourite);
             filteredQuestions = filteredQuestions.filter((question) => question.favourited === true);
         }
-        console.log(filteredQuestions);
         if (category) {
             filteredQuestions = filteredQuestions.filter((question) => question.category === category);
         }
@@ -194,5 +191,22 @@ app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
     else {
         console.log('please revise question id');
         res.send('please revise question id');
+    }
+}));
+//override the intial values of favourited to false. append this to the element. Create a completed to false add this to the json object. 
+app.put('/reset', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        let reWriteData = yield fsPromises.readFile(library, 'utf8');
+        let jsonReWriteData = JSON.parse(reWriteData);
+        // Loop through each question and reset properties
+        let parsedJsonReWriteData = jsonReWriteData.questions.map((question) => (Object.assign(Object.assign({}, question), { favourited: false, completed: false })));
+        // Rewrite database with updated data
+        let addingFalse = JSON.stringify({ questions: parsedJsonReWriteData }, null, 2); // Assuming "questions" is the key for your array of questions
+        yield fsPromises.writeFile(library, addingFalse);
+        res.send('Favourite has been reset & Completed been reset');
+    }
+    catch (error) {
+        console.error('Error occurred while resetting favourite:', error);
+        res.status(500).send('Error occurred while attempting to reset favourite');
     }
 }));
