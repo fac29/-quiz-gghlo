@@ -10,7 +10,7 @@ const app: Express = express();
 const port = 3210;
 app.use(
 	cors({
-		origin: 'http://localhost:5173/',
+		origin: 'http://localhost:5173',
 	})
 );
 
