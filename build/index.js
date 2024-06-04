@@ -13,11 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const cors = require('cors');
 const fs = require('fs');
 const fsPromises = fs.promises;
 const library = 'data.json';
 const app = (0, express_1.default)();
 const port = 3210;
+app.use(cors({
+    origin: 'http://localhost:5173',
+}));
 app.use(express_1.default.json());
 //util section
 const readData = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -70,9 +74,8 @@ const writeData = (content) => __awaiter(void 0, void 0, void 0, function* () {
 });
 // converts boolean strings to booleans
 function parseBoolean(string) {
-    return string === "true" ? true : string === "false" ? false : undefined;
+    return string === 'true' ? true : string === 'false' ? false : undefined;
 }
-;
 //return user determined number of questions
 function returnNumberOfRandomQuestions(questions, n) {
     // Check if n questions are available
@@ -144,6 +147,10 @@ app.put('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, functi
     let id = req.params.id;
     let deleteData = yield fsPromises.readFile(library, 'utf8');
     let jsonDeleteData = JSON.parse(deleteData);
+<<<<<<< Updated upstream
+=======
+    console.log(jsonDeleteData);
+>>>>>>> Stashed changes
     let qMatch = jsonDeleteData.questions.findIndex((item) => item.id === id);
     if (qMatch) {
         try {
@@ -179,10 +186,16 @@ app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
     if (questionYass.length > 0) {
         try {
             let qMatch = jsonDeleteData.questions.filter((question) => question.id !== parseInt(id));
+<<<<<<< Updated upstream
             let updatedJsonString = JSON.stringify({ questions: qMatch }, null, ' ');
+=======
+            // console.log(qMatch);
+            let updatedJsonString = JSON.stringify({ questions: qMatch }, null, ' ');
+            // console.log(updatedJsonString);
+>>>>>>> Stashed changes
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('the question has been  deleted');
-            res.send('question has successfully been deleted');
+            res.send({ message: 'question has successfully been deleted' });
         }
         catch (err) {
             console.log(err);
@@ -193,7 +206,7 @@ app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
         res.send('please revise question id');
     }
 }));
-//override the intial values of favourited to false. append this to the element. Create a completed to false add this to the json object. 
+//override the intial values of favourited to false. append this to the element. Create a completed to false add this to the json object.
 app.put('/reset', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let reWriteData = yield fsPromises.readFile(library, 'utf8');
