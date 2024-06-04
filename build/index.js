@@ -147,6 +147,10 @@ app.put('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, functi
     let id = req.params.id;
     let deleteData = yield fsPromises.readFile(library, 'utf8');
     let jsonDeleteData = JSON.parse(deleteData);
+<<<<<<< Updated upstream
+=======
+    console.log(jsonDeleteData);
+>>>>>>> Stashed changes
     let qMatch = jsonDeleteData.questions.findIndex((item) => item.id === id);
     if (qMatch) {
         try {
@@ -182,7 +186,13 @@ app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
     if (questionYass.length > 0) {
         try {
             let qMatch = jsonDeleteData.questions.filter((question) => question.id !== parseInt(id));
+<<<<<<< Updated upstream
             let updatedJsonString = JSON.stringify({ questions: qMatch }, null, ' ');
+=======
+            // console.log(qMatch);
+            let updatedJsonString = JSON.stringify({ questions: qMatch }, null, ' ');
+            // console.log(updatedJsonString);
+>>>>>>> Stashed changes
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('the question has been  deleted');
             res.send({ message: 'question has successfully been deleted' });

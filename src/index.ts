@@ -188,6 +188,10 @@ app.put('/questions/:id', async (req: Request, res: Response) => {
 	let id = req.params.id;
 	let deleteData = await fsPromises.readFile(library, 'utf8');
 	let jsonDeleteData = JSON.parse(deleteData);
+<<<<<<< Updated upstream
+=======
+	console.log(jsonDeleteData);
+>>>>>>> Stashed changes
 	let qMatch = jsonDeleteData.questions.findIndex(
 		(item: any) => item.id === id
 	);
