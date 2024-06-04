@@ -233,7 +233,7 @@ app.delete('/questions/:id', async (req: Request, res: Response) => {
 			let updatedJsonString = JSON.stringify({ questions: qMatch }, null, ' ');
 			await fsPromises.writeFile(library, updatedJsonString);
 			console.log('the question has been  deleted');
-			res.send('question has successfully been deleted');
+			res.send({ message: 'question has successfully been deleted' });
 		} catch (err) {
 			console.log(err);
 		}
