@@ -173,7 +173,7 @@ app.get('/questions', async (req: Request, res: Response) => {
 			res.json(filteredQuestions);
 		}
 	} catch (err) {
-		res.status(500).send('Failed to read data');
+		res.status(500).send({message: 'Failed to read data'});
 	}
 });
 
@@ -201,7 +201,7 @@ app.put('/questions/:id', async (req: Request, res: Response) => {
 			const updateQ: Question = req.body;
 
 			await writeData(updateQ);
-			res.send('Question successfully updated');
+			res.send({message: 'Question successfully updated'});
 		} catch (err) {
 			console.log(err);
 		}
@@ -215,7 +215,7 @@ app.post('/questions', async (req: Request, res: Response) => {
 	try {
 		const newQuestion: Question = req.body;
 		await writeData(newQuestion);
-		res.send('Question successfully added');
+		res.send({message: 'Question successfully added'});
 	} catch (err) {
 		console.log(err);
 	}
