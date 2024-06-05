@@ -1,12 +1,14 @@
 import express, { Express, Application, Request, Response } from 'express';
 
 const cors = require('cors');
-
+const https = require('https');
 const fs = require('fs');
 const fsPromises = fs.promises;
+const path = require('path');
 const library = 'data.json';
 
 const app: Express = express();
+const morgan = require('morgan');
 const port = 3210;
 app.use(
 	cors({
@@ -15,6 +17,14 @@ app.use(
 );
 
 app.use(express.json());
+app.use(morgan('dev'));
+
+const options = {
+	key: fs.readFileSync(path.join(__dirname, 'localhost-key.pem')),
+	cert: fs.readFileSync(path.join(__dirname, 'localhost.pem')),
+};
+
+const server = https.createServer(options, app);
 
 interface LibraryData {
 	questions: Question[];
@@ -175,6 +185,10 @@ app.get('/questions', async (req: Request, res: Response) => {
 	} catch (err) {
 		res.status(500).send({ message: 'Failed to read data' });
 	}
+});
+
+server.listen(port, () => {
+	console.log(`App listening on https://localhost:${port}`);
 });
 
 app.listen(port, () => {
