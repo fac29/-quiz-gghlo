@@ -12,7 +12,7 @@ const morgan = require('morgan');
 const port = 3210;
 app.use(
 	cors({
-		origin: 'http://localhost:5173',
+		origin: 'https://fac29.github.io/quiz-gghlo-frontend',
 	})
 );
 
@@ -188,7 +188,7 @@ app.get('/questions', async (req: Request, res: Response) => {
 });
 
 server.listen(port, () => {
-	console.log(`App listening on https://localhost:${port}`);
+	console.log(`App listening on https://13.60.83.197:${port}`);
 });
 
 app.listen(port, () => {
