@@ -150,7 +150,7 @@ app.get('/questions', async (req: Request, res: Response) => {
 		}
 
 		if (filteredQuestions.length == 0) {
-			res.send('No matching questions found in the library.');
+			res.send({ message: 'No matching questions found in the library.' });
 		} else if (numberOfQuestions) {
 			/* returning user selected number of questions */
 			let selectedQuestions;
@@ -239,7 +239,7 @@ app.delete('/questions/:id', async (req: Request, res: Response) => {
 		}
 	} else {
 		console.log('please revise question id');
-		res.send('please revise question id');
+		res.send({ message: 'please revise question id' });
 	}
 });
 
@@ -267,9 +267,11 @@ app.put('/reset', async (req: Request, res: Response) => {
 		); // Assuming "questions" is the key for your array of questions
 		await fsPromises.writeFile(library, addingFalse);
 
-		res.send('Favourite has been reset & Completed been reset');
+		res.send({ message: 'Favourite has been reset & Completed been reset' });
 	} catch (error) {
 		console.error('Error occurred while resetting favourite:', error);
-		res.status(500).send('Error occurred while attempting to reset favourite');
+		res
+			.status(500)
+			.send({ message: 'Error occurred while attempting to reset favourite' });
 	}
 });
