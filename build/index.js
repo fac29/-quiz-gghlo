@@ -14,15 +14,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors = require('cors');
+const https = require('https');
 const fs = require('fs');
 const fsPromises = fs.promises;
+const path = require('path');
 const library = 'data.json';
 const app = (0, express_1.default)();
+const appHTTPS = (0, express_1.default)();
+const morgan = require('morgan');
 const port = 3210;
+const portHTTPS = 2345;
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://fac29.github.io/quiz-gghlo-frontend',
 }));
 app.use(express_1.default.json());
+app.use(morgan('dev'));
+const options = {
+    key: fs.readFileSync(path.join(__dirname, 'localhost-key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, 'localhost.pem')),
+};
+const server = https.createServer(options, app);
+server.listen(portHTTPS, () => {
+    console.log(`App listening on https://13.60.83.197:${portHTTPS}`);
+});
+app.listen(port, () => {
+    console.log('Successfully connected to the server. Running at: http://localhost:3210/');
+});
 //util section
 const readData = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -114,7 +131,7 @@ app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* 
             filteredQuestions = filteredQuestions.filter((question) => question.difficulty === difficulty);
         }
         if (filteredQuestions.length == 0) {
-            res.send('No matching questions found in the library.');
+            res.send({ message: 'No matching questions found in the library.' });
         }
         else if (numberOfQuestions) {
             /* returning user selected number of questions */
@@ -136,27 +153,20 @@ app.get('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         }
     }
     catch (err) {
-        res.status(500).send('Failed to read data');
+        res.status(500).send({ message: 'Failed to read data' });
     }
 }));
-app.listen(port, () => {
-    console.log('Successfully connected to the server. Running at: http://localhost:3210/');
-});
 //section for update endpoints
 app.put('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let id = req.params.id;
     let deleteData = yield fsPromises.readFile(library, 'utf8');
     let jsonDeleteData = JSON.parse(deleteData);
-<<<<<<< Updated upstream
-=======
-    console.log(jsonDeleteData);
->>>>>>> Stashed changes
     let qMatch = jsonDeleteData.questions.findIndex((item) => item.id === id);
     if (qMatch) {
         try {
             const updateQ = req.body;
             yield writeData(updateQ);
-            res.send('Question successfully updated');
+            res.send({ message: 'Question successfully updated' });
         }
         catch (err) {
             console.log(err);
@@ -171,7 +181,7 @@ app.post('/questions', (req, res) => __awaiter(void 0, void 0, void 0, function*
     try {
         const newQuestion = req.body;
         yield writeData(newQuestion);
-        res.send('Question successfully added');
+        res.send({ message: 'Question successfully added' });
     }
     catch (err) {
         console.log(err);
@@ -186,13 +196,7 @@ app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
     if (questionYass.length > 0) {
         try {
             let qMatch = jsonDeleteData.questions.filter((question) => question.id !== parseInt(id));
-<<<<<<< Updated upstream
             let updatedJsonString = JSON.stringify({ questions: qMatch }, null, ' ');
-=======
-            // console.log(qMatch);
-            let updatedJsonString = JSON.stringify({ questions: qMatch }, null, ' ');
-            // console.log(updatedJsonString);
->>>>>>> Stashed changes
             yield fsPromises.writeFile(library, updatedJsonString);
             console.log('the question has been  deleted');
             res.send({ message: 'question has successfully been deleted' });
@@ -203,7 +207,7 @@ app.delete('/questions/:id', (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
     else {
         console.log('please revise question id');
-        res.send('please revise question id');
+        res.send({ message: 'please revise question id' });
     }
 }));
 //override the intial values of favourited to false. append this to the element. Create a completed to false add this to the json object.
@@ -216,10 +220,12 @@ app.put('/reset', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // Rewrite database with updated data
         let addingFalse = JSON.stringify({ questions: parsedJsonReWriteData }, null, 2); // Assuming "questions" is the key for your array of questions
         yield fsPromises.writeFile(library, addingFalse);
-        res.send('Favourite has been reset & Completed been reset');
+        res.send({ message: 'Favourite has been reset & Completed been reset' });
     }
     catch (error) {
         console.error('Error occurred while resetting favourite:', error);
-        res.status(500).send('Error occurred while attempting to reset favourite');
+        res
+            .status(500)
+            .send({ message: 'Error occurred while attempting to reset favourite' });
     }
 }));
