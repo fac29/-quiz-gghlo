@@ -8,14 +8,16 @@ const path = require('path');
 const library = 'data.json';
 
 const app: Express = express();
+const appHTTPS: Express = express();
 const morgan = require('morgan');
 const port = 3210;
+const portHTTPS = 2345;
+
 app.use(
 	cors({
 		origin: 'https://fac29.github.io/quiz-gghlo-frontend',
 	})
 );
-
 app.use(express.json());
 app.use(morgan('dev'));
 
@@ -25,6 +27,16 @@ const options = {
 };
 
 const server = https.createServer(options, app);
+
+server.listen(portHTTPS, () => {
+	console.log(`App listening on https://13.60.83.197:${portHTTPS}`);
+});
+
+app.listen(port, () => {
+	console.log(
+		'Successfully connected to the server. Running at: http://localhost:3210/'
+	);
+});
 
 interface LibraryData {
 	questions: Question[];
@@ -185,16 +197,6 @@ app.get('/questions', async (req: Request, res: Response) => {
 	} catch (err) {
 		res.status(500).send({ message: 'Failed to read data' });
 	}
-});
-
-server.listen(port, () => {
-	console.log(`App listening on https://13.60.83.197:${port}`);
-});
-
-app.listen(port, () => {
-	console.log(
-		'Successfully connected to the server. Running at: http://localhost:3210/'
-	);
 });
 
 //section for update endpoints
