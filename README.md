@@ -44,9 +44,9 @@ These are our endpoints and how we're using them.
 | /questions/:id | PUT         | JSON string | Update existing question with favouriting?                                                                    |
 | /questions/:id | DELETE      | JSON string | Delete existing question                                                                                      |
 
-## Testing endpoints
+## Using endpoints
 
-To test the endpoints, you will need to install Postman or Bruno and then do the following:
+To use the endpoints, you will need to install Postman or Bruno and then do the following:
 
 Server path: http://localhost:3210/
 
@@ -111,6 +111,16 @@ Server path: http://localhost:3210/
    Here is an example path you can submit on Postman/Bruno: http://localhost:3210/questions/31
 
    When you check data.json, the question should no longer be there.
+
+# Testing our code works
+
+We used Postman to test our endpoints. You can find the local and server tests [here](!https://www.postman.com/halimahexe/workspace/local-project-1-quiz-ggho/collection/35077866-90f84f28-42ea-4834-89d5-af30f72965e7?action=share&creator=35077866).
+
+You will need to set up the following global environment variables:
+```js
+Local Host: http://localhost:3210/
+AWS: https://13.60.83.197:2345/
+```
 
 # Prettier configuration
 
