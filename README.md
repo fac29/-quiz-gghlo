@@ -138,13 +138,14 @@ The following are settings we've updated from the default:
 
 ![Editor: Default Formatter Defines a default formatter which takes precedence over all other formatter settings. Must be the identifier of an extension contributing a formatter. Set to 'Prettier - Code formatter'](assets/image-3.png)
 
-# User stories
+# Creating SSL keys to use HTTPS
 
-As a **quizzer**, I want to:
+In order to use HTTPS you will need to create your own SSL keys. You can use the commands below on a Linux terminal:
 
-- Select a subject area for my quiz.
-- Begin a quiz session with randomly generated questions.
-- View a summary of my quiz results, including areas of strength and weakness.
-- Add, edit, and delete quiz questions and answers.
+```
+openssl genrsa -out localhost-key.pem 2048
 
-- https://drive.google.com/file/d/16tOZ-KAU32farRAmBqDaiYN2LxSPcVan/view?usp=sharing
+openssl req -new -x509 -sha256 -key localhost-key.pem -out localhost.pem -days 365
+```
+
+Once these have been installed save them in the `build/` folder so the server can access them when it's running.
